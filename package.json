@@ -1,0 +1,42 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "format": "prettier --write 'resources/**/*.{js,ts,vue,css,scss,html,blade.php}'",
+    "lint": "eslint 'resources/**/*.{js,ts,vue}' --fix",
+    "lint:check": "eslint 'resources/**/*.{js,ts,vue}'",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.9",
+    "@tailwindcss/typography": "^0.5.15",
+    "@types/alpinejs": "^3.13.10",
+    "@vitejs/plugin-laravel": "^1.0.5",
+    "alpinejs": "^3.14.7",
+    "autoprefixer": "^10.4.20",
+    "axios": "^1.7.7",
+    "eslint": "^9.15.0",
+    "laravel-vite-plugin": "^1.0.5",
+    "postcss": "^8.5.1",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.8",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4",
+    "@playwright/test": "^1.48.2"
+  },
+  "dependencies": {
+    "@headlessui/js": "^0.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

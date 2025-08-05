@@ -1,0 +1,111 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "env": {
+        "ALLOWED_DIRECTORIES": [
+          ".",
+          "./app",
+          "./resources",
+          "./database",
+          "./config",
+          "./routes",
+          "./tests",
+          "./storage",
+          "./public",
+          "./vendor"
+        ]
+      }
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"]
+    },
+    "database": {
+      "command": "node",
+      "args": ["~/.config/claude-code/mcp-servers/db-mcp-server/dist/index.js"],
+      "env": {
+        "DB_CONFIG_PATH": "./database-config.json"
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp"]
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-github-token-here"
+      }
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "context7": {
+      "command": "node",
+      "args": ["~/.config/claude-code/mcp-servers/context7/dist/index.js"]
+    }
+  },
+  "rules": [
+    {
+      "pattern": "**/config/*.php",
+      "instructions": "Use kebab-case for config file names, snake_case for config keys. Avoid env() helper outside config files. Use Laravel 12 configuration patterns and new config features."
+    },
+    {
+      "pattern": "**/*.php",
+      "instructions": "Follow Laravel 12 conventions strictly. Use PSR-12 standards, constructor property promotion, typed properties, and the new Attribute class for accessors/mutators. Use FluxUI components for UI elements. Follow modern Laravel patterns including new validation syntax and enhanced model features."
+    },
+    {
+      "pattern": "**/app/Models/*.php",
+      "instructions": "Use Laravel 12 model features: Attribute class for accessors/mutators, #[Scope] attribute for query scopes, proper casting with enum support, new validation methods, and enhanced relationship definitions. Always use typed properties and constructor promotion where applicable."
+    },
+    {
+      "pattern": "**/routes/*.php",
+      "instructions": "Use kebab-case URLs, camelCase route names and parameters. Use route tuple notation [Controller::class, 'method']. Put HTTP verbs first when defining routes. Use Laravel 12 route model binding enhancements."
+    },
+    {
+      "pattern": "**/app/Http/Controllers/*.php",
+      "instructions": "Use plural resource names for controllers. Stick to CRUD keywords (index, create, store, show, edit, update, destroy). Extract new controllers for non-CRUD actions. Use Laravel 12 request validation and response patterns."
+    },
+    {
+      "pattern": "**/resources/views/**/*.blade.php",
+      "instructions": "Use camelCase for view files. Prefer FluxUI components over custom HTML/CSS. Use Flux components for forms, buttons, modals, etc. Indent with 4 spaces. Use {{ __() }} for translations."
+    },
+    {
+      "pattern": "**/app/Livewire/*.php",
+      "instructions": "Follow Livewire 3.x best practices with Laravel 12. Use Livewire Volt for class-based components - prefer functional components over traditional class components. Use FluxUI components in Livewire views. Use public properties for data binding. Implement proper validation with Laravel 12 validation features. Use wire:model for form inputs."
+    },
+    {
+      "pattern": "**/resources/views/livewire/**/*.blade.php",
+      "instructions": "Create Livewire Volt functional components using <?php use() ?> syntax at the top of blade files. Prefer Volt functional components over traditional class-based components. Use FluxUI components exclusively. Follow Volt patterns for state management and actions."
+    },
+    {
+      "pattern": "**/resources/js/**/*.js",
+      "instructions": "Use Alpine.js patterns that complement FluxUI components. Keep JavaScript minimal and declarative. Use x-data, x-show, x-if appropriately. Follow Alpine.js conventions and work seamlessly with FluxUI."
+    },
+    {
+      "pattern": "**/resources/css/**/*.css",
+      "instructions": "Use Tailwind CSS utility classes. FluxUI provides most styling - only add custom CSS when FluxUI components don't cover the use case. Follow FluxUI design system principles."
+    },
+    {
+      "pattern": "**/database/migrations/*.php",
+      "instructions": "Use Laravel 12 migration features including new column types, enhanced indexing, and improved foreign key constraints. Use descriptive migration names following Laravel conventions."
+    },
+    {
+      "pattern": "**/tests/**/*.php",
+      "instructions": "Follow Laravel 12 testing conventions with Pest PHP preferred. Use Feature tests for HTTP requests, Unit tests for models and services. Use Laravel 12 testing helpers and assertions."
+    },
+    {
+      "pattern": "**/bootstrap/app.php",
+      "instructions": "Use Laravel 12 Application class patterns for configuring middleware, events, and exceptions. Register middleware through withMiddleware(), events through withEvents(), and exception handling through withExceptions(). Follow the streamlined bootstrap configuration approach."
+    }
+  ],
+  "customInstructions": "You are an expert Laravel 12 developer using FluxUI for component-based development and Livewire Volt for functional components. You build production-quality applications using Laravel 12, Livewire 3.x with Volt, Alpine.js, FluxUI, and Tailwind CSS. Always prefer Livewire Volt functional components over traditional class-based components. Use Laravel 12 features like the new Attribute class for accessors/mutators, enhanced validation, improved model features, and modern syntax. Use FluxUI components for all UI elements instead of building custom components. Follow PSR-12 standards, use typed properties, constructor property promotion, and maintain clean, readable code with proper separation of concerns."
+}
