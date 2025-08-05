@@ -32,7 +32,8 @@ This Laravel 12 project has been configured with Claude Code and optimized MCP s
 - **Claude Code** - AI development assistant
 
 ### Install in your project
-```curl -fsSL https://raw.githubusercontent.com/chrisbaswell/laravel-claude-code-setup/main/setup.sh | bash
+```bash
+curl -fsSL https://raw.githubusercontent.com/chrisbaswell/laravel-claude-code-setup/main/setup.sh | bash
 ```
 
 ### Setup Steps
