@@ -1105,6 +1105,138 @@ EOF
 Generated: $(date)
 EOF
 
+    # Copy or download all context files from the repository
+    SCRIPT_DIR="$(dirname "$0")"
+    REPO_BASE_URL="https://raw.githubusercontent.com/chrisbaswell/laravel-claude-code-setup/main"
+    
+    # Function to copy local file or download from repo
+    copy_or_download_context_file() {
+        local filename="$1"
+        local description="$2"
+        
+        print_status "Installing $description..."
+        if [ -f "$SCRIPT_DIR/.claude/context/$filename" ]; then
+            cp "$SCRIPT_DIR/.claude/context/$filename" ".claude/context/"
+            print_success "$description copied from local repository"
+        else
+            print_status "$description not found locally, downloading from repository..."
+            if curl -fsSL "$REPO_BASE_URL/.claude/context/$filename" -o ".claude/context/$filename"; then
+                print_success "$description downloaded successfully"
+            else
+                print_warning "Failed to download $description, creating basic version"
+                return 1
+            fi
+        fi
+        return 0
+    }
+    
+    # Install Laravel 12 guidelines
+    if ! copy_or_download_context_file "laravel12_guidelines.md" "Laravel 12 guidelines"; then
+        cat > ".claude/context/laravel12_guidelines.md" << 'EOF'
+# Laravel 12 Development Guidelines
+
+## Core Laravel 12 Features
+
+### New Attribute Class for Accessors/Mutators
+Laravel 12 introduces the `Attribute` class for cleaner accessor and mutator definitions.
+
+### Modern Application Configuration
+Use the streamlined Application class in `bootstrap/app.php`.
+
+### Enhanced Validation
+Leverage Laravel 12's improved validation features.
+
+Generated: $(date)
+EOF
+    fi
+    
+    # Install Livewire Volt guidelines
+    if ! copy_or_download_context_file "livewire_volt_guidelines.md" "Livewire Volt guidelines"; then
+        cat > ".claude/context/livewire_volt_guidelines.md" << 'EOF'
+# Livewire Volt Development Guidelines
+
+## Volt Functional Components
+Use Volt for modern, functional component development with Livewire.
+
+Generated: $(date)
+EOF
+    fi
+    
+    # Install FluxUI guidelines
+    if ! copy_or_download_context_file "fluxui_guidelines.md" "FluxUI guidelines"; then
+        cat > ".claude/context/fluxui_guidelines.md" << 'EOF'
+# FluxUI Development Guidelines
+
+## Component Usage
+Always prefer FluxUI components over custom HTML/CSS.
+
+Generated: $(date)
+EOF
+    fi
+    
+    # Install Livewire Alpine context
+    if ! copy_or_download_context_file "livewire_alpine_context.md" "Livewire Alpine context"; then
+        cat > ".claude/context/livewire_alpine_context.md" << 'EOF'
+# Livewire + Alpine.js Integration
+
+## Best Practices
+Combine Livewire with Alpine.js for optimal interactivity.
+
+Generated: $(date)
+EOF
+    fi
+    
+    # Install project structure guide
+    if ! copy_or_download_context_file "project_structure.md" "project structure guide"; then
+        cat > ".claude/context/project_structure.md" << 'EOF'
+# Project Structure Guide
+
+## Laravel 12 Project Organization
+Follow Laravel 12 conventions for project structure.
+
+Generated: $(date)
+EOF
+    fi
+    
+    # Install Playwright testing guide
+    if ! copy_or_download_context_file "playwright_testing.md" "Playwright testing guide"; then
+        cat > ".claude/context/playwright_testing.md" << 'EOF'
+# Playwright Testing Guide
+
+## End-to-End Testing
+Use Playwright for comprehensive E2E testing.
+
+Generated: $(date)
+EOF
+    fi
+    
+    # Install web automation guide
+    if ! copy_or_download_context_file "web_automation_guide.md" "web automation guide"; then
+        cat > ".claude/context/web_automation_guide.md" << 'EOF'
+# Web Automation Guide
+
+## Playwright vs Fetch MCP
+Choose the right tool for web automation tasks.
+
+Generated: $(date)
+EOF
+    fi
+    
+    # Install Herd development guide
+    if ! copy_or_download_context_file "herd_development.md" "Herd development guide"; then
+        cat > ".claude/context/herd_development.md" << 'EOF'
+# Laravel Herd Development Guide
+
+## Local Development with Herd
+Use Laravel Herd for zero-configuration local development.
+
+Generated: $(date)
+EOF
+    fi
+    
+    # Install NetSuite context (optional)
+    copy_or_download_context_file "netsuite_context.md" "NetSuite context" || print_status "NetSuite context skipped (project-specific)"
+
     # Create FluxUI quick reference
     print_status "Creating FluxUI quick reference..."
     cat > ".claude/context/fluxui-reference.md" << EOF
@@ -1387,21 +1519,55 @@ EOF
 
     # Verify all files were created
     local files_created=0
-    local expected_files=("context/project-context.md" "context/coding-standards.md" "context/fluxui-reference.md" "shortcuts.sh" "README.md")
+    local required_files=(
+        "context/project-context.md" 
+        "context/coding-standards.md" 
+        "context/fluxui-reference.md"
+        "context/laravel12_guidelines.md"
+        "context/livewire_volt_guidelines.md"
+        "context/fluxui_guidelines.md"
+        "context/livewire_alpine_context.md"
+        "context/project_structure.md"
+        "context/playwright_testing.md"
+        "context/web_automation_guide.md"
+        "context/herd_development.md"
+        "shortcuts.sh" 
+        "README.md"
+    )
     
-    for file in "${expected_files[@]}"; do
+    local optional_files=(
+        "context/netsuite_context.md"
+    )
+    
+    # Count required files
+    for file in "${required_files[@]}"; do
         if [ -f ".claude/$file" ]; then
             ((files_created++))
         else
-            print_error "Failed to create .claude/$file"
+            print_error "Failed to create required file: .claude/$file"
         fi
     done
     
-    if [ $files_created -eq ${#expected_files[@]} ]; then
-        print_success "Project context files created! ($files_created/${#expected_files[@]} files)"
+    # Count optional files
+    local optional_created=0
+    for file in "${optional_files[@]}"; do
+        if [ -f ".claude/$file" ]; then
+            ((files_created++))
+            ((optional_created++))
+        fi
+    done
+    
+    local total_possible_files=$((${#required_files[@]} + ${#optional_files[@]}))
+    
+    if [ $files_created -ge ${#required_files[@]} ]; then
+        print_success "All required context files created! ($files_created/$total_possible_files files total)"
+        if [ $optional_created -gt 0 ]; then
+            print_status "Optional files installed: $optional_created"
+        fi
         return 0
     else
-        print_error "Only $files_created/${#expected_files[@]} project files were created successfully"
+        print_error "Only $files_created/$total_possible_files project files were created successfully"
+        print_error "Missing required files. Check the installation output above."
         return 1
     fi
 }
@@ -1497,7 +1663,7 @@ install_fluxui_and_volt() {
 # Main installation function
 main() {
     echo "================================================"
-    echo "Laravel Claude Code Setup Script v3.1"
+    echo "Laravel Claude Code Setup Script v3.2"
     echo "Laravel 12 + FluxUI + Playwright MCP Server"
     echo "================================================"
     echo ""

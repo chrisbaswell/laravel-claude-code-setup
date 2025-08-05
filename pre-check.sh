@@ -113,6 +113,14 @@ else
     ((ISSUES_FOUND++))
 fi
 
+# Check curl
+if command -v curl &> /dev/null; then
+    print_success "curl available"
+else
+    print_error "curl not found (required for downloading context files)"
+    ((ISSUES_FOUND++))
+fi
+
 # Check Claude Code
 if command -v claude &> /dev/null; then
     CLAUDE_VERSION=$(claude --version 2>/dev/null || echo "unknown")

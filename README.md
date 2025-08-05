@@ -31,9 +31,26 @@ This Laravel 12 project has been configured with Claude Code and optimized MCP s
 - **Node.js 20+** - For frontend asset compilation
 - **Claude Code** - AI development assistant
 
-### Install in your project
+### Installation Options
+
+**Option 1: One-line installation (recommended)**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/chrisbaswell/laravel-claude-code-setup/main/setup.sh | bash
+```
+
+**Option 2: Download and run manually**
+```bash
+curl -O https://raw.githubusercontent.com/chrisbaswell/laravel-claude-code-setup/main/setup.sh
+chmod +x setup.sh
+./setup.sh
+```
+
+**Option 3: Clone the repository**
+```bash
+git clone https://github.com/chrisbaswell/laravel-claude-code-setup.git
+cd laravel-claude-code-setup
+./setup.sh
+# Copy setup files to your Laravel project when prompted
 ```
 
 ### Setup Steps
@@ -308,16 +325,33 @@ npx playwright test --debug  # Debug mode
 - Write tests using Pest PHP for better readability
 - Use the provided shortcuts for common development tasks
 
-## Documentation
+## Project Context Files
 
-- Project context: `.claude/context/project-context.md`
-- Laravel 12 guidelines: `.claude/context/laravel12_guidelines.md`
-- FluxUI reference: `.claude/context/fluxui_guidelines.md`
-- Livewire Volt patterns: `.claude/context/livewire_volt_guidelines.md`
-- Playwright testing: `.claude/context/playwright_testing.md`
-- Web automation guide: `.claude/context/web_automation_guide.md`
-- Laravel Herd development: `.claude/context/herd_development.md`
-- NetSuite integration: `.claude/context/netsuite_context.md`
+The setup script automatically creates comprehensive documentation in `.claude/context/`:
+
+### Core Development Guides
+- **Laravel 12 guidelines** (`laravel12_guidelines.md`) - Latest Laravel 12 features and patterns
+- **Livewire Volt patterns** (`livewire_volt_guidelines.md`) - Functional component development
+- **FluxUI reference** (`fluxui_guidelines.md`) - Component usage and best practices
+- **Livewire + Alpine.js** (`livewire_alpine_context.md`) - Frontend integration patterns
+
+### Project Organization  
+- **Project context** (`project-context.md`) - Tech stack overview and conventions
+- **Project structure** (`project_structure.md`) - File organization guidelines
+- **Coding standards** (`coding-standards.md`) - Project-specific code quality rules
+
+### Testing & Automation
+- **Playwright testing** (`playwright_testing.md`) - End-to-end testing with Playwright MCP
+- **Web automation guide** (`web_automation_guide.md`) - Playwright vs Fetch MCP usage
+- **Herd development** (`herd_development.md`) - Local development with Laravel Herd
+
+### Quick References
+- **FluxUI quick reference** (`fluxui-reference.md`) - Component cheat sheet
+
+### Optional Project-Specific
+- **NetSuite integration** (`netsuite_context.md`) - Business system integration (if applicable)
+
+## Documentation
 
 ## Development Shortcuts
 
