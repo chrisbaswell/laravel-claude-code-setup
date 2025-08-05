@@ -1260,6 +1260,99 @@ EOF
     # Install NetSuite context (optional)
     copy_or_download_context_file "netsuite_context.md" "NetSuite context" || print_status "NetSuite context skipped (project-specific)"
 
+    # Create project-specific .claude_config file
+    print_status "Creating project-specific Claude configuration..."
+    cat > ".claude_config" << 'EOF'
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "env": {
+        "ALLOWED_DIRECTORIES": [
+          ".",
+          "./.claude",
+          "./app",
+          "./resources",
+          "./database",
+          "./config",
+          "./routes",
+          "./tests",
+          "./storage",
+          "./public",
+          "./vendor"
+        ]
+      }
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"]
+    }
+  },
+  "rules": [
+    {
+      "pattern": "**/config/*.php",
+      "instructions": "Use kebab-case for config file names, snake_case for config keys. Avoid env() helper outside config files. Use Laravel 12 configuration patterns and new config features."
+    },
+    {
+      "pattern": "**/*.php",
+      "instructions": "Follow Laravel 12 conventions strictly. Use PSR-12 standards, constructor property promotion, typed properties, and the new Attribute class for accessors/mutators. Use FluxUI components for UI elements. Follow modern Laravel patterns including new validation syntax and enhanced model features."
+    },
+    {
+      "pattern": "**/app/Models/*.php",
+      "instructions": "Use Laravel 12 model features: Attribute class for accessors/mutators, #[Scope] attribute for query scopes, proper casting with enum support, new validation methods, and enhanced relationship definitions. Always use typed properties and constructor promotion where applicable."
+    },
+    {
+      "pattern": "**/routes/*.php",
+      "instructions": "Use kebab-case URLs, camelCase route names and parameters. Use route tuple notation [Controller::class, 'method']. Put HTTP verbs first when defining routes. Use Laravel 12 route model binding enhancements."
+    },
+    {
+      "pattern": "**/app/Http/Controllers/*.php",
+      "instructions": "Use plural resource names for controllers. Stick to CRUD keywords (index, create, store, show, edit, update, destroy). Extract new controllers for non-CRUD actions. Use Laravel 12 request validation and response patterns."
+    },
+    {
+      "pattern": "**/resources/views/**/*.blade.php",
+      "instructions": "Use camelCase for view files. Prefer FluxUI components over custom HTML/CSS. Use Flux components for forms, buttons, modals, etc. Indent with 4 spaces. Use {{ __() }} for translations."
+    },
+    {
+      "pattern": "**/app/Livewire/*.php",
+      "instructions": "Follow Livewire 3.x best practices with Laravel 12. Use Livewire Volt for class-based components - prefer functional components over traditional class components. Use FluxUI components in Livewire views. Use public properties for data binding. Implement proper validation with Laravel 12 validation features. Use wire:model for form inputs."
+    },
+    {
+      "pattern": "**/resources/views/livewire/**/*.blade.php",
+      "instructions": "Create Livewire Volt functional components using <?php use() ?> syntax at the top of blade files. Prefer Volt functional components over traditional class-based components. Use FluxUI components exclusively. Follow Volt patterns for state management and actions."
+    },
+    {
+      "pattern": "**/resources/js/**/*.js",
+      "instructions": "Use Alpine.js patterns that complement FluxUI components. Keep JavaScript minimal and declarative. Use x-data, x-show, x-if appropriately. Follow Alpine.js conventions and work seamlessly with FluxUI."
+    },
+    {
+      "pattern": "**/resources/css/**/*.css",
+      "instructions": "Use Tailwind CSS utility classes. FluxUI provides most styling - only add custom CSS when FluxUI components don't cover the use case. Follow FluxUI design system principles."
+    },
+    {
+      "pattern": "**/database/migrations/*.php",
+      "instructions": "Use Laravel 12 migration features including new column types, enhanced indexing, and improved foreign key constraints. Use descriptive migration names following Laravel conventions."
+    },
+    {
+      "pattern": "**/tests/**/*.php",
+      "instructions": "Follow Laravel 12 testing conventions with Pest PHP preferred. Use Feature tests for HTTP requests, Unit tests for models and services. Use Laravel 12 testing helpers and assertions."
+    },
+    {
+      "pattern": "**/bootstrap/app.php",
+      "instructions": "Use Laravel 12 Application class patterns for configuring middleware, events, and exceptions. Register middleware through withMiddleware(), events through withEvents(), and exception handling through withExceptions(). Follow the streamlined bootstrap configuration approach."
+    },
+    {
+      "pattern": "**/.claude/**/*.md",
+      "instructions": "These are project context files containing coding standards, development guidelines, and project-specific documentation. Reference these files when asked about project conventions, standards, tech stack, or development patterns. These files contain the definitive coding standards and development guidelines for this Laravel 12 project."
+    }
+  ],
+  "customInstructions": "You are an expert Laravel 12 developer using FluxUI for component-based development and Livewire Volt for functional components. You build production-quality applications using Laravel 12, Livewire 3.x with Volt, Alpine.js, FluxUI, and Tailwind CSS. Always prefer Livewire Volt functional components over traditional class-based components. Use Laravel 12 features like the new Attribute class for accessors/mutators, enhanced validation, improved model features, and modern syntax. Use FluxUI components for all UI elements instead of building custom components. Follow PSR-12 standards, use typed properties, constructor property promotion, and maintain clean, readable code with proper separation of concerns.\n\nIMPORTANT: When asked about coding standards, project conventions, tech stack, or development patterns, always check the .claude/context/ directory first. This directory contains comprehensive project documentation including coding-standards.md, project-context.md, and various development guidelines that define the specific standards for this project."
+}
+EOF
+    print_success "Claude configuration created (.claude_config)"
+    print_status "This file enables Claude Code to access your .claude/context/ files"
+
     # Create FluxUI quick reference
     print_status "Creating FluxUI quick reference..."
     cat > ".claude/context/fluxui-reference.md" << EOF
@@ -1558,6 +1651,10 @@ EOF
         "README.md"
     )
     
+    local project_files=(
+        ".claude_config"
+    )
+    
     local optional_files=(
         "context/netsuite_context.md"
     )
@@ -1571,6 +1668,15 @@ EOF
         fi
     done
     
+    # Count project files (in root directory)
+    for file in "${project_files[@]}"; do
+        if [ -f "$file" ]; then
+            ((files_created++))
+        else
+            print_error "Failed to create required file: $file"
+        fi
+    done
+    
     # Count optional files
     local optional_created=0
     for file in "${optional_files[@]}"; do
@@ -1580,9 +1686,10 @@ EOF
         fi
     done
     
-    local total_possible_files=$((${#required_files[@]} + ${#optional_files[@]}))
+    local total_expected_files=$((${#required_files[@]} + ${#project_files[@]}))
+    local total_possible_files=$((${#required_files[@]} + ${#project_files[@]} + ${#optional_files[@]}))
     
-    if [ $files_created -ge ${#required_files[@]} ]; then
+    if [ $files_created -ge $total_expected_files ]; then
         print_success "All required context files created! ($files_created/$total_possible_files files total)"
         if [ $optional_created -gt 0 ]; then
             print_status "Optional files installed: $optional_created"
@@ -1811,12 +1918,16 @@ main() {
     echo "   npm run dev    # Vite development server"
     echo "   herd open      # Open project in browser (Herd automatically serves Laravel)"
     echo ""
-    echo "3. Test Claude Code integration:"
-    echo "   - Ask Claude: 'What MCP servers are available?'"
+    echo "3. Restart Claude Code to load configuration:"
+    echo "   - Close and reopen Claude Code to load .claude_config"
+    echo "   - This enables access to project context files"
+    echo ""
+    echo "4. Test Claude Code integration:"
+    echo "   - Ask Claude: 'What are the coding standards for this project?'"
     echo "   - Try: 'Show me the project structure'"
     echo "   - Test: 'What's in my database?' (if database is configured)"
     echo ""
-    echo "4. Start building with FluxUI:"
+    echo "5. Start building with FluxUI:"
     echo "   - Use FluxUI components instead of custom HTML"
     echo "   - Follow Laravel 12 patterns (new Attribute class)"
     echo "   - Write tests with Pest PHP"

@@ -31,6 +31,8 @@ This Laravel 12 project has been configured with Claude Code and optimized MCP s
 - **Node.js 20+** - For frontend asset compilation
 - **Claude Code** - AI development assistant
 
+> **Important**: The setup script creates a `.claude_config` file that enables Claude Code to access the project's context files in the `.claude/` directory. This allows Claude to reference your project's coding standards and development guidelines.
+
 ### Installation Options
 
 **Option 1: One-line installation (recommended)**
@@ -412,6 +414,21 @@ npx playwright install
 ```bash
 # Issue: GitHub MCP server shows deprecation warning
 # Solution: This is expected - the official server is deprecated but still functional
+```
+
+**Claude Code Can't Access Context Files**
+```bash
+# Issue: Claude Code can't find .claude/context files when asked about coding standards
+# Cause: Missing .claude_config file or .claude directory not in ALLOWED_DIRECTORIES
+
+# Solution 1: Ensure .claude_config exists in project root
+ls -la .claude_config
+
+# Solution 2: If missing, re-run setup script
+./setup.sh
+
+# Solution 3: Restart Claude Code to reload configuration
+# Close and reopen Claude Code after creating .claude_config
 ```
 
 **Understanding Database MCP Server Installation**

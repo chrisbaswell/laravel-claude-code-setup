@@ -6,6 +6,7 @@
       "env": {
         "ALLOWED_DIRECTORIES": [
           ".",
+          "./.claude",
           "./app",
           "./resources",
           "./database",
@@ -105,7 +106,11 @@
     {
       "pattern": "**/bootstrap/app.php",
       "instructions": "Use Laravel 12 Application class patterns for configuring middleware, events, and exceptions. Register middleware through withMiddleware(), events through withEvents(), and exception handling through withExceptions(). Follow the streamlined bootstrap configuration approach."
+    },
+    {
+      "pattern": "**/.claude/**/*.md",
+      "instructions": "These are project context files containing coding standards, development guidelines, and project-specific documentation. Reference these files when asked about project conventions, standards, tech stack, or development patterns. These files contain the definitive coding standards and development guidelines for this Laravel 12 project."
     }
   ],
-  "customInstructions": "You are an expert Laravel 12 developer using FluxUI for component-based development and Livewire Volt for functional components. You build production-quality applications using Laravel 12, Livewire 3.x with Volt, Alpine.js, FluxUI, and Tailwind CSS. Always prefer Livewire Volt functional components over traditional class-based components. Use Laravel 12 features like the new Attribute class for accessors/mutators, enhanced validation, improved model features, and modern syntax. Use FluxUI components for all UI elements instead of building custom components. Follow PSR-12 standards, use typed properties, constructor property promotion, and maintain clean, readable code with proper separation of concerns."
+  "customInstructions": "You are an expert Laravel 12 developer using FluxUI for component-based development and Livewire Volt for functional components. You build production-quality applications using Laravel 12, Livewire 3.x with Volt, Alpine.js, FluxUI, and Tailwind CSS. Always prefer Livewire Volt functional components over traditional class-based components. Use Laravel 12 features like the new Attribute class for accessors/mutators, enhanced validation, improved model features, and modern syntax. Use FluxUI components for all UI elements instead of building custom components. Follow PSR-12 standards, use typed properties, constructor property promotion, and maintain clean, readable code with proper separation of concerns.\n\nIMPORTANT: When asked about coding standards, project conventions, tech stack, or development patterns, always check the .claude/context/ directory first. This directory contains comprehensive project documentation including coding-standards.md, project-context.md, and various development guidelines that define the specific standards for this project."
 }
