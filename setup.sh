@@ -360,6 +360,7 @@ install_context7() {
 # Install Database MCP Server (FreePeak version)
 install_database() {
     print_step "Installing Database MCP Server (FreePeak)..."
+    print_status "Note: Installing database MCP server globally (project-specific config handled later)"
     
     if ! check_go; then
         print_warning "Go installation failed. Skipping database MCP server."
@@ -534,10 +535,22 @@ parse_env() {
     
     # Source the .env file safely
     if [ -f ".env" ]; then
-        # Export variables that don't start with # and contain =
-        set -a
-        source <(grep -v '^#' .env | grep '=' | sed 's/^/export /')
-        set +a
+        # Parse .env more reliably
+        while IFS='=' read -r key value; do
+            # Skip comments and empty lines
+            [[ $key =~ ^[[:space:]]*# ]] && continue
+            [[ -z $key ]] && continue
+            
+            # Clean key and value
+            key=$(echo "$key" | tr -d '[:space:]')
+            # Remove surrounding quotes only (double or single)
+            if [[ $value =~ ^\".*\"$ ]]; then
+                value="${value:1:${#value}-2}"
+            elif [[ $value =~ ^\'.*\'$ ]]; then
+                value="${value:1:${#value}-2}"
+            fi
+            export "$key=$value"
+        done < .env
     fi
     
     # Get database connection details with defaults
@@ -550,7 +563,14 @@ parse_env() {
     
     print_success "Environment variables parsed!"
     print_status "Database: $DB_CONNECTION on $DB_HOST:$DB_PORT"
-    if [ ! -z "$DB_DATABASE" ]; then
+    
+    # Debug: Show what we parsed for DB_DATABASE
+    if [ -f ".env" ] && grep -q "^DB_DATABASE=" .env; then
+        local env_db_value=$(grep "^DB_DATABASE=" .env | cut -d'=' -f2- | sed 's/^["\x27]\|["\x27]$//g')
+        print_status "Found DB_DATABASE in .env: '$env_db_value'"
+    fi
+    
+    if [ ! -z "$DB_DATABASE" ] && [ "$DB_DATABASE" != "" ]; then
         print_status "Database name: $DB_DATABASE"
     else
         print_warning "No database name configured in .env file"
@@ -562,12 +582,14 @@ parse_env() {
 # Generate database configuration for the MCP server
 generate_database_config() {
     print_step "Generating database configuration..."
+    print_status "Creating project-specific database MCP configuration..."
     
     PROJECT_PATH="$PWD"
     
-    if [ -z "$DB_DATABASE" ]; then
-        print_warning "No database configured in .env file. Skipping database MCP configuration."
-        print_status "To enable database MCP integration:"
+    if [ -z "$DB_DATABASE" ] || [ "$DB_DATABASE" = "" ]; then
+        print_warning "No database name found. Skipping project-specific database MCP configuration."
+        print_status "Note: Database MCP server is installed globally but won't be configured for this project"
+        print_status "To enable database MCP integration for this project:"
         print_status "1. Set DB_DATABASE in your .env file (e.g., DB_DATABASE=your_project_name)"
         print_status "2. Create the database in MySQL/PostgreSQL"
         print_status "3. Run the setup script again to configure database MCP access"
@@ -785,10 +807,11 @@ configure_claude_mcp() {
             print_warning "Database binary not found or not executable"
         fi
     else
-        if [ -z "$DB_DATABASE" ]; then
-            print_status "No database configured in .env file, skipping Database MCP server"
+        if [ -z "$DB_DATABASE" ] || [ "$DB_DATABASE" = "" ]; then
+            print_status "No database name in .env file, skipping project-specific Database MCP server"
+            print_status "Note: Global database MCP server is still available for manual configuration"
         else
-            print_warning "Database configuration file not found"
+            print_warning "Database configuration file not found (database-config.json missing)"
         fi
     fi
     
@@ -1663,7 +1686,7 @@ install_fluxui_and_volt() {
 # Main installation function
 main() {
     echo "================================================"
-    echo "Laravel Claude Code Setup Script v3.2"
+    echo "Laravel Claude Code Setup Script v3.3"
     echo "Laravel 12 + FluxUI + Playwright MCP Server"
     echo "================================================"
     echo ""

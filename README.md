@@ -371,15 +371,20 @@ After running `source .claude/shortcuts.sh`:
 
 ### Common Installation Issues
 
-**Database MCP Integration Skipped**
+**Database MCP Server Installed But Not Configured**
 ```bash
-# Issue: "No database configured in .env file"
-# Solution: Configure database in .env
+# Issue: "Database MCP server installed but project-specific config skipped"
+# Explanation: Database MCP server installs globally but needs project configuration
+
+# Solution: Ensure DB_DATABASE is set in .env
 DB_DATABASE=your_project_name
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_USERNAME=root
 DB_PASSWORD=
+
+# Then re-run setup to configure project-specific database access
+./setup.sh
 ```
 
 **Playwright Browser Installation Warning**
@@ -407,6 +412,22 @@ npx playwright install
 ```bash
 # Issue: GitHub MCP server shows deprecation warning
 # Solution: This is expected - the official server is deprecated but still functional
+```
+
+**Understanding Database MCP Server Installation**
+```bash
+# The setup process has two phases for database integration:
+
+# Phase 1: Global Installation (always runs if Go is available)
+[STEP] Installing Database MCP Server (FreePeak)...
+[SUCCESS] Database MCP Server installed!
+
+# Phase 2: Project Configuration (only if DB_DATABASE is set)
+[STEP] Generating database configuration...
+[WARNING] No database name found. Skipping project-specific database MCP configuration.
+
+# This is normal behavior - the server is installed globally but needs 
+# project-specific configuration to access your database
 ```
 
 ### Quick Fixes
