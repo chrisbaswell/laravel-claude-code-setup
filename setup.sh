@@ -1260,98 +1260,82 @@ EOF
     # Install NetSuite context (optional)
     copy_or_download_context_file "netsuite_context.md" "NetSuite context" || print_status "NetSuite context skipped (project-specific)"
 
-    # Create project-specific .claude_config file
-    print_status "Creating project-specific Claude configuration..."
-    cat > ".claude_config" << 'EOF'
-{
-  "mcpServers": {
-    "filesystem": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
-      "env": {
-        "ALLOWED_DIRECTORIES": [
-          ".",
-          "./.claude",
-          "./app",
-          "./resources",
-          "./database",
-          "./config",
-          "./routes",
-          "./tests",
-          "./storage",
-          "./public",
-          "./vendor"
-        ]
-      }
-    },
-    "git": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-git"]
-    }
-  },
-  "rules": [
-    {
-      "pattern": "**/config/*.php",
-      "instructions": "Use kebab-case for config file names, snake_case for config keys. Avoid env() helper outside config files. Use Laravel 12 configuration patterns and new config features."
-    },
-    {
-      "pattern": "**/*.php",
-      "instructions": "Follow Laravel 12 conventions strictly. Use PSR-12 standards, constructor property promotion, typed properties, and the new Attribute class for accessors/mutators. Use FluxUI components for UI elements. Follow modern Laravel patterns including new validation syntax and enhanced model features."
-    },
-    {
-      "pattern": "**/app/Models/*.php",
-      "instructions": "Use Laravel 12 model features: Attribute class for accessors/mutators, #[Scope] attribute for query scopes, proper casting with enum support, new validation methods, and enhanced relationship definitions. Always use typed properties and constructor promotion where applicable."
-    },
-    {
-      "pattern": "**/routes/*.php",
-      "instructions": "Use kebab-case URLs, camelCase route names and parameters. Use route tuple notation [Controller::class, 'method']. Put HTTP verbs first when defining routes. Use Laravel 12 route model binding enhancements."
-    },
-    {
-      "pattern": "**/app/Http/Controllers/*.php",
-      "instructions": "Use plural resource names for controllers. Stick to CRUD keywords (index, create, store, show, edit, update, destroy). Extract new controllers for non-CRUD actions. Use Laravel 12 request validation and response patterns."
-    },
-    {
-      "pattern": "**/resources/views/**/*.blade.php",
-      "instructions": "Use camelCase for view files. Prefer FluxUI components over custom HTML/CSS. Use Flux components for forms, buttons, modals, etc. Indent with 4 spaces. Use {{ __() }} for translations."
-    },
-    {
-      "pattern": "**/app/Livewire/*.php",
-      "instructions": "Follow Livewire 3.x best practices with Laravel 12. Use Livewire Volt for class-based components - prefer functional components over traditional class components. Use FluxUI components in Livewire views. Use public properties for data binding. Implement proper validation with Laravel 12 validation features. Use wire:model for form inputs."
-    },
-    {
-      "pattern": "**/resources/views/livewire/**/*.blade.php",
-      "instructions": "Create Livewire Volt functional components using <?php use() ?> syntax at the top of blade files. Prefer Volt functional components over traditional class-based components. Use FluxUI components exclusively. Follow Volt patterns for state management and actions."
-    },
-    {
-      "pattern": "**/resources/js/**/*.js",
-      "instructions": "Use Alpine.js patterns that complement FluxUI components. Keep JavaScript minimal and declarative. Use x-data, x-show, x-if appropriately. Follow Alpine.js conventions and work seamlessly with FluxUI."
-    },
-    {
-      "pattern": "**/resources/css/**/*.css",
-      "instructions": "Use Tailwind CSS utility classes. FluxUI provides most styling - only add custom CSS when FluxUI components don't cover the use case. Follow FluxUI design system principles."
-    },
-    {
-      "pattern": "**/database/migrations/*.php",
-      "instructions": "Use Laravel 12 migration features including new column types, enhanced indexing, and improved foreign key constraints. Use descriptive migration names following Laravel conventions."
-    },
-    {
-      "pattern": "**/tests/**/*.php",
-      "instructions": "Follow Laravel 12 testing conventions with Pest PHP preferred. Use Feature tests for HTTP requests, Unit tests for models and services. Use Laravel 12 testing helpers and assertions."
-    },
-    {
-      "pattern": "**/bootstrap/app.php",
-      "instructions": "Use Laravel 12 Application class patterns for configuring middleware, events, and exceptions. Register middleware through withMiddleware(), events through withEvents(), and exception handling through withExceptions(). Follow the streamlined bootstrap configuration approach."
-    },
-    {
-      "pattern": "**/.claude/**/*.md",
-      "instructions": "These are project context files containing coding standards, development guidelines, and project-specific documentation. Reference these files when asked about project conventions, standards, tech stack, or development patterns. These files contain the definitive coding standards and development guidelines for this Laravel 12 project."
-    }
-  ],
-  "customInstructions": "You are an expert Laravel 12 developer using FluxUI for component-based development and Livewire Volt for functional components. You build production-quality applications using Laravel 12, Livewire 3.x with Volt, Alpine.js, FluxUI, and Tailwind CSS. Always prefer Livewire Volt functional components over traditional class-based components. Use Laravel 12 features like the new Attribute class for accessors/mutators, enhanced validation, improved model features, and modern syntax. Use FluxUI components for all UI elements instead of building custom components. Follow PSR-12 standards, use typed properties, constructor property promotion, and maintain clean, readable code with proper separation of concerns.\n\nIMPORTANT: When asked about coding standards, project conventions, tech stack, or development patterns, always check the .claude/context/ directory first. This directory contains comprehensive project documentation including coding-standards.md, project-context.md, and various development guidelines that define the specific standards for this project."
-}
+    # Create highly discoverable coding standards files that Claude will find
+    print_status "Creating discoverable project documentation..."
+    
+    # Create a top-level CODING-STANDARDS.md file
+    cat > "CODING-STANDARDS.md" << EOF
+# Coding Standards for this Laravel 12 Project
+
+## 🎯 Project Tech Stack
+- **Laravel 12** with modern PHP 8.3+ features
+- **FluxUI** for pre-built components  
+- **Livewire 3.x + Volt** for reactive server-side components
+- **Alpine.js** for minimal client-side JavaScript
+- **Tailwind CSS** for utility-first styling
+- **Pest PHP** for modern testing
+
+## 🔧 Key Development Rules
+
+### Laravel 12 Features (REQUIRED)
+- **Use Attribute class** for accessors/mutators (NOT old \`getNameAttribute\` style)
+- **Use #[Scope] attribute** for query scopes
+- **Constructor property promotion** and **typed properties**
+- **Modern Application class** in bootstrap/app.php
+
+### Component Strategy (CRITICAL)
+- **ALWAYS use FluxUI components** instead of custom HTML/CSS
+- **PREFER Livewire Volt functional components** over traditional class components
+- **Use Alpine.js minimally** - only to complement FluxUI
+
+### Code Quality
+- **PSR-12 standards** with Laravel Pint formatting
+- **Pest PHP** for all tests (Feature and Unit)
+- **Typed properties and return types**
+- **Meaningful variable names**
+
+## 📁 Complete Documentation
+
+For comprehensive guidelines, see the \`.claude/context/\` directory:
+
+- \`coding-standards.md\` - Detailed project standards
+- \`project-context.md\` - Full project overview
+- \`laravel12_guidelines.md\` - Laravel 12 specific patterns
+- \`fluxui_guidelines.md\` - FluxUI component usage
+- \`livewire_volt_guidelines.md\` - Volt patterns and examples
+
+Generated: $(date)
 EOF
-    print_success "Claude configuration created (.claude_config)"
-    print_status "This file enables Claude Code to access your .claude/context/ files"
+
+    # Create PROJECT-OVERVIEW.md for high-level context
+    cat > "PROJECT-OVERVIEW.md" << EOF
+# Project Overview
+
+## Technology Stack
+This is a **Laravel 12** project using:
+- **FluxUI** for UI components
+- **Livewire Volt** for functional components  
+- **Alpine.js** + **Tailwind CSS** for frontend
+- **Pest PHP** for testing
+
+## Development Approach
+- Component-first development with FluxUI
+- Server-side rendering with Livewire
+- Modern Laravel 12 patterns and features
+- Comprehensive testing with Pest
+
+## Documentation Location
+Complete development guidelines are in \`.claude/context/\`:
+- Coding standards
+- Component patterns  
+- Laravel 12 features
+- Testing approaches
+- Project structure
+
+**When asking about coding standards or development patterns, always reference the files in \`.claude/context/\` for complete information.**
+
+Generated: $(date)  
+EOF
 
     # Create FluxUI quick reference
     print_status "Creating FluxUI quick reference..."
@@ -1433,59 +1417,6 @@ EOF
 </flux:table>
 \`\`\`
 
-### Modal Form
-\`\`\`blade
-<flux:modal wire:model="showModal" name="user-modal">
-    <flux:modal.header>
-        <flux:heading>{{ \$editing ? 'Edit' : 'Create' }} User</flux:heading>
-    </flux:modal.header>
-    
-    <flux:modal.body>
-        <div class="space-y-4">
-            <flux:field>
-                <flux:label>Name</flux:label>
-                <flux:input wire:model="form.name" />
-                <flux:error name="form.name" />
-            </flux:field>
-            
-            <flux:field>
-                <flux:label>Email</flux:label>
-                <flux:input wire:model="form.email" type="email" />
-                <flux:error name="form.email" />
-            </flux:field>
-        </div>
-    </flux:modal.body>
-    
-    <flux:modal.footer>
-        <flux:button variant="primary" wire:click="save">
-            {{ \$editing ? 'Update' : 'Create' }}
-        </flux:button>
-        <flux:button variant="outline" wire:click="\$set('showModal', false)">
-            Cancel
-        </flux:button>
-    </flux:modal.footer>
-</flux:modal>
-\`\`\`
-
-## Styling Guidelines
-
-### Component Variants
-- **primary**: Main actions (save, submit, confirm)
-- **outline**: Secondary actions (cancel, back)
-- **danger**: Destructive actions (delete, remove)
-
-### Colors
-- **blue**: Primary/info states
-- **green**: Success states
-- **red**: Error/danger states
-- **yellow**: Warning states
-- **gray**: Neutral states
-
-### Sizes
-- **sm**: Small components for compact layouts
-- **md**: Default size for most use cases
-- **lg**: Large components for emphasis
-
 Generated: $(date)
 EOF
 
@@ -1548,6 +1479,34 @@ EOF
 
     chmod +x ".claude/shortcuts.sh"
     
+    # Update main project README if it exists
+    if [ -f "README.md" ]; then
+        print_status "Adding coding standards section to existing README.md..."
+        # Check if our section already exists
+        if ! grep -q "## 🎯 Coding Standards" README.md; then
+            cat >> "README.md" << EOF
+
+## 🎯 Coding Standards
+
+This Laravel 12 project follows specific coding standards documented in:
+
+- **Complete Standards**: \`.claude/context/coding-standards.md\`
+- **Project Context**: \`.claude/context/project-context.md\`
+- **Laravel 12 Guidelines**: \`.claude/context/laravel12_guidelines.md\`
+- **FluxUI Patterns**: \`.claude/context/fluxui_guidelines.md\`
+- **Livewire Volt**: \`.claude/context/livewire_volt_guidelines.md\`
+
+### Key Points
+- Use **Laravel 12 Attribute class** for accessors/mutators
+- Prefer **Livewire Volt functional components**
+- Always use **FluxUI components** instead of custom HTML
+- Follow **PSR-12** with **Laravel Pint** formatting
+- Use **Pest PHP** for testing
+
+EOF
+        fi
+    fi
+    
     # Create README
     print_status "Creating project README..."
     cat > ".claude/README.md" << EOF
@@ -1592,7 +1551,7 @@ This Laravel 12 project has been configured with Claude Code and optimized MCP s
 3. Start development:
    \`\`\`bash
    npm run dev    # Start Vite dev server
-   pas           # Start Laravel development server
+   herd open      # Open project in browser
    \`\`\`
 
 ## Key Features
@@ -1629,7 +1588,7 @@ This Laravel 12 project has been configured with Claude Code and optimized MCP s
 - Coding standards: \`.claude/context/coding-standards.md\`
 - FluxUI reference: \`.claude/context/fluxui-reference.md\`
 
-Generated: $(date)
+Generated: $(date)  
 Happy coding with Laravel 12 + FluxUI + Claude Code! 🚀
 EOF
 
@@ -1652,7 +1611,8 @@ EOF
     )
     
     local project_files=(
-        ".claude_config"
+        "CODING-STANDARDS.md"
+        "PROJECT-OVERVIEW.md"
     )
     
     local optional_files=(
@@ -1918,16 +1878,13 @@ main() {
     echo "   npm run dev    # Vite development server"
     echo "   herd open      # Open project in browser (Herd automatically serves Laravel)"
     echo ""
-    echo "3. Restart Claude Code to load configuration:"
-    echo "   - Close and reopen Claude Code to load .claude_config"
-    echo "   - This enables access to project context files"
-    echo ""
-    echo "4. Test Claude Code integration:"
+    echo "3. Test Claude Code integration:"
     echo "   - Ask Claude: 'What are the coding standards for this project?'"
     echo "   - Try: 'Show me the project structure'"
     echo "   - Test: 'What's in my database?' (if database is configured)"
+    echo "   - Note: Context files are now in discoverable locations (CODING-STANDARDS.md, PROJECT-OVERVIEW.md)"
     echo ""
-    echo "5. Start building with FluxUI:"
+    echo "4. Start building with FluxUI:"
     echo "   - Use FluxUI components instead of custom HTML"
     echo "   - Follow Laravel 12 patterns (new Attribute class)"
     echo "   - Write tests with Pest PHP"

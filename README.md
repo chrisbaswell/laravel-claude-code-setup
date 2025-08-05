@@ -416,19 +416,21 @@ npx playwright install
 # Solution: This is expected - the official server is deprecated but still functional
 ```
 
-**Claude Code Can't Access Context Files**
+**Claude Code Can't Find Project Standards**
 ```bash
-# Issue: Claude Code can't find .claude/context files when asked about coding standards
-# Cause: Missing .claude_config file or .claude directory not in ALLOWED_DIRECTORIES
+# Issue: Claude Code can't find coding standards when asked
+# Cause: Context files not in discoverable locations
 
-# Solution 1: Ensure .claude_config exists in project root
-ls -la .claude_config
+# Solution 1: Check if top-level files exist
+ls -la CODING-STANDARDS.md PROJECT-OVERVIEW.md
 
 # Solution 2: If missing, re-run setup script
 ./setup.sh
 
-# Solution 3: Restart Claude Code to reload configuration
-# Close and reopen Claude Code after creating .claude_config
+# Solution 3: Ask specific questions
+# "Read the CODING-STANDARDS.md file"
+# "What's in the .claude/context/ directory?"
+# "Show me the project overview from PROJECT-OVERVIEW.md"
 ```
 
 **Understanding Database MCP Server Installation**
