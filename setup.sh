@@ -482,16 +482,37 @@ install_filesystem() {
     fi
 }
 
-# Install Fetch MCP Server (Official MCP version)
+# Install Fetch MCP Server (zcaceres version - enhanced capabilities)
 install_fetch() {
-    print_step "Installing Fetch MCP Server (Official MCP)..."
+    print_step "Installing Fetch MCP Server (zcaceres - enhanced version)..."
     
-    print_status "Installing Fetch MCP server via npm..."
-    if npm install -g @modelcontextprotocol/server-fetch; then
-        print_success "Fetch MCP Server installed!"
+    cd "$MCP_DIR"
+    
+    if [ -d "fetch-mcp" ]; then
+        print_status "Removing existing fetch-mcp installation..."
+        rm -rf fetch-mcp
+    fi
+    
+    print_status "Cloning zcaceres fetch-mcp repository..."
+    if ! git clone https://github.com/zcaceres/fetch-mcp.git fetch-mcp; then
+        print_error "Failed to clone zcaceres fetch-mcp repository"
+        return 1
+    fi
+    
+    cd fetch-mcp
+    
+    print_status "Installing fetch-mcp dependencies..."
+    if ! npm install; then
+        print_error "Failed to install fetch-mcp dependencies"
+        return 1
+    fi
+    
+    print_status "Building fetch-mcp..."
+    if npm run build; then
+        print_success "Enhanced Fetch MCP Server installed!"
         return 0
     else
-        print_error "Failed to install Fetch MCP Server"
+        print_error "Failed to build fetch-mcp"
         return 1
     fi
 }
@@ -694,20 +715,20 @@ configure_claude_mcp() {
         print_warning "Playwright MCP server not found - skipping configuration"
     fi
     
-    # Add global Fetch MCP server
-    if command -v npx &> /dev/null && npx @modelcontextprotocol/server-fetch --version &> /dev/null 2>&1; then
+    # Add global Fetch MCP server (zcaceres enhanced version)
+    if [ -f "$MCP_DIR/fetch-mcp/dist/index.js" ]; then
         if ! claude mcp list 2>/dev/null | grep -q "^fetch:"; then
-            print_status "Adding global Fetch MCP server..."
-            if claude mcp add "fetch" npx @modelcontextprotocol/server-fetch; then
-                print_success "Global Fetch MCP server added"
+            print_status "Adding global Enhanced Fetch MCP server..."
+            if claude mcp add "fetch" node "$MCP_DIR/fetch-mcp/dist/index.js"; then
+                print_success "Global Enhanced Fetch MCP server added"
             else
-                print_warning "Failed to add global Fetch MCP server"
+                print_warning "Failed to add global Enhanced Fetch MCP server"
             fi
         else
-            print_success "Global Fetch MCP server already configured"
+            print_success "Global Enhanced Fetch MCP server already configured"
         fi
     else
-        print_warning "Fetch MCP server not found - skipping configuration"
+        print_warning "Enhanced Fetch MCP server not found - skipping configuration"
     fi
     
     print_header "Setting up project-specific MCP servers..."
@@ -895,7 +916,7 @@ create_project_context() {
 
 ### Development Tools
 - **Claude Code**: AI-powered development assistant
-- **MCP Servers**: Context7, GitHub, Memory, Database, Playwright, Fetch, Filesystem
+- **MCP Servers**: Context7, GitHub, Memory, Database, Playwright, Enhanced Fetch, Filesystem
 - **Testing**: Pest PHP for feature and unit testing
 - **Code Quality**: Laravel Pint for code formatting
 

@@ -34,8 +34,8 @@
       "args": ["-y", "@playwright/mcp"]
     },
     "fetch": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+      "command": "node",
+      "args": ["~/.config/claude-code/mcp-servers/fetch-mcp/dist/index.js"]
     },
     "github": {
       "command": "npx",

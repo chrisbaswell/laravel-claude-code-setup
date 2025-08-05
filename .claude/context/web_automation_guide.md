@@ -31,28 +31,30 @@ await page.waitForSelector('.dynamic-content');
 const content = await page.textContent('.dynamic-content');
 ```
 
-### 🔍 **Fetch MCP** - For Lightweight Data Retrieval
+### 🔍 **Fetch MCP** - For Enhanced Data Retrieval & Content Processing
 
 **Use Fetch when you need:**
-- **API Calls**: REST API consumption, data retrieval
-- **Simple Web Scraping**: Static HTML content extraction
-- **Information Gathering**: Research tasks, data collection
+- **Multi-format Content**: HTML, JSON, plain text, or Markdown output
+- **API Calls**: REST API consumption with custom headers
+- **Web Scraping**: Clean text extraction from websites  
+- **Content Transformation**: HTML to Markdown conversion
+- **Research Tasks**: Information gathering with formatted output
 - **Fast Requests**: Lightweight operations without browser overhead
-- **Bulk Data Processing**: Multiple rapid requests
-- **RSS/XML Parsing**: Feed processing, data syndication
-- **Health Checks**: Server monitoring, uptime checks
+- **Bulk Data Processing**: Multiple rapid requests with different formats
+- **Documentation Parsing**: Extract clean content from docs sites
 
-**Example Use Cases:**
+**Enhanced Capabilities (zcaceres/fetch-mcp):**
 ```bash
-# Research tasks
-"Fetch the latest Laravel documentation for validation rules"
-"Get the current weather data from OpenWeatherMap API"
-"Retrieve the latest GitHub releases for Laravel framework"
+# Multiple output formats available
+"Fetch Laravel docs as Markdown for easier reading"
+"Get API response as clean JSON structure" 
+"Extract plain text from news article (no HTML)"
+"Fetch website content as raw HTML for parsing"
 
-# API integration
-"Fetch user data from the CRM API"
-"Get product information from the inventory system"
-"Retrieve exchange rates from the financial API"
+# Custom headers for authenticated requests
+"Fetch protected API endpoint with Bearer token"
+"Get content from site requiring specific User-Agent"
+"Access authenticated documentation with API key"
 ```
 
 ## Complementary Use Cases
@@ -95,11 +97,12 @@ const content = await page.textContent('.dynamic-content');
 
 ## Performance Considerations
 
-### **Fetch MCP Performance**
+### **Enhanced Fetch MCP Performance**
 - ⚡ **Fast**: Minimal overhead, direct HTTP requests
-- 💾 **Lightweight**: Low memory usage
-- 🔄 **Scalable**: Handle multiple concurrent requests
-- 📊 **Efficient**: Perfect for bulk data operations
+- 💾 **Lightweight**: Low memory usage compared to browser automation
+- 🔄 **Versatile**: Multiple output formats (HTML, JSON, text, Markdown)
+- 📊 **Efficient**: Perfect for bulk data operations with content transformation
+- 🔧 **Flexible**: Custom headers support for authenticated requests
 
 ### **Playwright MCP Performance**
 - 🐌 **Slower**: Full browser execution overhead
@@ -149,11 +152,19 @@ playwright('test product display on frontend');
 
 ## Agent Task Examples
 
-### **Research Tasks** (Fetch MCP)
+### **Research Tasks** (Enhanced Fetch MCP)
 ```
-Agent: "Research the latest Laravel 12 security features"
-→ Fetch: Laravel docs, security guides, release notes
-→ Result: Comprehensive security feature summary
+Agent: "Get Laravel 12 security best practices as clean Markdown"
+→ Enhanced Fetch: HTML to Markdown conversion, clean formatting
+→ Result: Well-formatted security documentation
+
+Agent: "Extract plain text from this news article (remove ads/navigation)"
+→ Enhanced Fetch: Text extraction with HTML cleanup
+→ Result: Clean article content only
+
+Agent: "Fetch API documentation and return as JSON structure"
+→ Enhanced Fetch: JSON parsing with structured output
+→ Result: Properly formatted API reference data
 ```
 
 ### **Testing Tasks** (Playwright MCP)
@@ -174,12 +185,14 @@ Agent: "Integrate and test a new payment provider"
 
 ## Best Practices
 
-### **Choose Fetch MCP When:**
-- The content is static HTML
-- You need simple data extraction
-- Performance is critical
-- You're making API calls
-- The site doesn't require JavaScript
+### **Choose Enhanced Fetch MCP When:**
+- You need content in specific formats (Markdown, plain text, JSON)
+- The content is static HTML or API responses
+- You want clean text extraction without ads/navigation
+- Performance is critical for bulk operations
+- You're making API calls with custom authentication headers
+- You need content transformation (HTML to Markdown)
+- The site doesn't require JavaScript interaction
 
 ### **Choose Playwright MCP When:**
 - Content is JavaScript-generated

@@ -9,7 +9,7 @@ This Laravel 12 project has been configured with Claude Code and optimized MCP s
 - **Memory** - Shared knowledge base across projects  
 - **Context7** - Latest Laravel 12 documentation access
 - **Playwright** - Browser automation and testing capabilities (Microsoft MCP)
-- **Fetch** - HTTP requests and web data retrieval (Official MCP)
+- **Fetch** - Enhanced HTTP requests, web scraping, and content transformation (zcaceres/fetch-mcp)
 
 ### Project-Specific Servers
 - **Filesystem** - Access to this project's files
@@ -291,7 +291,7 @@ npx playwright test --debug  # Debug mode
 - **Memory**: Persistent knowledge across sessions
 - **Database**: Direct database queries and schema analysis
 - **Playwright**: Browser automation, testing, and web scraping
-- **Fetch**: HTTP requests, API calls, and web data retrieval
+- **Fetch**: Enhanced HTTP requests with HTML, JSON, text, and Markdown parsing
 - **Filesystem**: Read and modify project files
 
 ### Usage Tips
