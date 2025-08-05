@@ -2,7 +2,7 @@
 
 ## Livewire Best Practices
 
-### Component Structure
+### Component Structure using Laravel Volt
 ```php
 <?php
 
@@ -11,12 +11,15 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Validate;
+use Livewire\Attributes\Url;
+use Livewire\Attributes\Computed;
 
 class CustomerList extends Component
 {
     use WithPagination;
 
     #[Validate('required|string|min:2')]
+    #[Url]
     public string $search = '';
 
     #[Validate('in:active,inactive,all')]
@@ -36,12 +39,11 @@ class CustomerList extends Component
 
     public function render()
     {
-        return view('livewire.customer-list', [
-            'customers' => $this->getCustomers(),
-        ]);
+        return view('livewire.customer-list');
     }
 
-    private function getCustomers()
+    #[Computed]
+    public function customers()
     {
         return Customer::query()
             ->when($this->search, fn($query) => $query->search($this->search))
