@@ -428,12 +428,18 @@ install_playwright() {
     if npm install -g @playwright/mcp; then
         print_success "Playwright MCP Server installed!"
         
-        # Install Playwright browsers
-        print_status "Installing Playwright browsers..."
-        if npx playwright install; then
-            print_success "Playwright browsers installed successfully!"
+        # Only install browsers if the project already has @playwright/test
+        if [ -f "package.json" ] && grep -q '"@playwright/test"' package.json; then
+            print_status "Installing Playwright browsers..."
+            if npx playwright install; then
+                print_success "Playwright browsers installed successfully!"
+            else
+                print_warning "Failed to install Playwright browsers"
+                print_status "You can install them later with: npx playwright install"
+            fi
         else
-            print_warning "Failed to install Playwright browsers - you may need to run 'npx playwright install' manually"
+            print_status "Playwright browsers will be installed when you run 'npm install' in your project"
+            print_status "After project setup, run: npx playwright install"
         fi
         
         return 0
@@ -447,7 +453,8 @@ install_playwright() {
 install_github() {
     print_step "Installing GitHub MCP Server..."
     
-    if npm install -g @modelcontextprotocol/server-github; then
+    print_status "Note: Installing official GitHub MCP server (deprecated warnings are expected)"
+    if npm install -g @modelcontextprotocol/server-github --silent 2>/dev/null || npm install -g @modelcontextprotocol/server-github; then
         print_success "GitHub MCP Server installed!"
         return 0
     else
@@ -502,7 +509,11 @@ install_fetch() {
     cd fetch-mcp
     
     print_status "Installing fetch-mcp dependencies..."
-    if ! npm install; then
+    # Suppress npm warnings and fix security vulnerabilities
+    if npm install --silent 2>/dev/null || npm install; then
+        print_status "Fixing security vulnerabilities..."
+        npm audit fix --force 2>/dev/null || true
+    else
         print_error "Failed to install fetch-mcp dependencies"
         return 1
     fi
@@ -542,7 +553,9 @@ parse_env() {
     if [ ! -z "$DB_DATABASE" ]; then
         print_status "Database name: $DB_DATABASE"
     else
-        print_warning "No database name configured"
+        print_warning "No database name configured in .env file"
+        print_status "To enable database MCP integration, set DB_DATABASE in your .env file"
+        print_status "Example: DB_DATABASE=your_project_name"
     fi
 }
 
@@ -554,6 +567,10 @@ generate_database_config() {
     
     if [ -z "$DB_DATABASE" ]; then
         print_warning "No database configured in .env file. Skipping database MCP configuration."
+        print_status "To enable database MCP integration:"
+        print_status "1. Set DB_DATABASE in your .env file (e.g., DB_DATABASE=your_project_name)"
+        print_status "2. Create the database in MySQL/PostgreSQL"
+        print_status "3. Run the setup script again to configure database MCP access"
         return 0
     fi
     
@@ -739,7 +756,9 @@ configure_claude_mcp() {
     
     # Add Filesystem MCP server (project-specific)
     print_status "Adding Filesystem MCP server for $PROJECT_NAME..."
-    if claude mcp add "filesystem-$PROJECT_ID" npx @modelcontextprotocol/server-filesystem "$PROJECT_PATH"; then
+    if claude mcp list 2>/dev/null | grep -q "^filesystem-$PROJECT_ID:"; then
+        print_success "Filesystem MCP server already configured: filesystem-$PROJECT_ID"
+    elif claude mcp add "filesystem-$PROJECT_ID" npx @modelcontextprotocol/server-filesystem "$PROJECT_PATH"; then
         print_success "Filesystem MCP server added: filesystem-$PROJECT_ID"
     else
         print_warning "Failed to add Filesystem MCP server"
@@ -1601,12 +1620,12 @@ main() {
     echo ""
     echo "2. Start development servers:"
     echo "   npm run dev    # Vite development server"
-    echo "   pas           # Laravel development server (shortcut)"
+    echo "   herd open      # Open project in browser (Herd automatically serves Laravel)"
     echo ""
     echo "3. Test Claude Code integration:"
     echo "   - Ask Claude: 'What MCP servers are available?'"
     echo "   - Try: 'Show me the project structure'"
-    echo "   - Test: 'What's in my database?'"
+    echo "   - Test: 'What's in my database?' (if database is configured)"
     echo ""
     echo "4. Start building with FluxUI:"
     echo "   - Use FluxUI components instead of custom HTML"

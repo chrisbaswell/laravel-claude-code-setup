@@ -38,42 +38,48 @@ curl -fsSL https://raw.githubusercontent.com/chrisbaswell/laravel-claude-code-se
 
 ### Setup Steps
 
-1. **Start Herd services:**
+1. **Run pre-installation check (recommended):**
+   ```bash
+   ./pre-check.sh
+   ```
+   This will verify all requirements and identify potential issues before installation.
+
+2. **Start Herd services:**
    ```bash
    # Herd automatically manages PHP, Nginx, and databases
    # Just ensure Herd is running and serving your project
    ```
 
-2. **Load development shortcuts:**
+3. **Load development shortcuts:**
    ```bash
    source .claude/shortcuts.sh
    ```
 
-3. **Install dependencies:**
+4. **Install dependencies:**
    ```bash
    composer install
    npm install
    ```
 
-4. **Install FluxUI and Volt (if not already installed):**
+5. **Install FluxUI and Volt (if not already installed):**
    ```bash
    composer require livewire/flux livewire/volt
    php artisan flux:install
    php artisan volt:install
    ```
 
-5. **Install Playwright for end-to-end testing:**
+6. **Install Playwright for end-to-end testing:**
    ```bash
    npx playwright install
    ```
 
-6. **Start development:**
+7. **Start development:**
    ```bash
    npm run dev    # Start Vite dev server
    # Herd automatically serves your Laravel app
    ```
 
-7. **Run tests:**
+8. **Run tests:**
    ```bash
    pest           # Run Laravel tests
    npm run test:e2e  # Run Playwright E2E tests
@@ -326,6 +332,64 @@ After running `source .claude/shortcuts.sh`:
 - `npm-dev` - npm run dev
 - `test-e2e` - npm run test:e2e (Playwright)
 - `test-e2e-ui` - npm run test:e2e:ui (Playwright UI mode)
+
+## Troubleshooting
+
+### Common Installation Issues
+
+**Database MCP Integration Skipped**
+```bash
+# Issue: "No database configured in .env file"
+# Solution: Configure database in .env
+DB_DATABASE=your_project_name
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+**Playwright Browser Installation Warning**
+```bash
+# Issue: Playwright warns about missing dependencies
+# Solution: Install Playwright in your project first
+npm install @playwright/test
+npx playwright install
+```
+
+**Filesystem MCP Server Already Exists**
+```bash
+# Issue: "MCP server filesystem-[name] already exists"
+# Solution: This is normal and safe to ignore - server is already configured
+```
+
+**npm Security Vulnerabilities**
+```bash
+# Issue: High severity vulnerabilities in fetch-mcp
+# Solution: Vulnerabilities are automatically fixed during installation
+# Or manually run: npm audit fix --force
+```
+
+**Deprecated Package Warnings**
+```bash
+# Issue: GitHub MCP server shows deprecation warning
+# Solution: This is expected - the official server is deprecated but still functional
+```
+
+### Quick Fixes
+
+```bash
+# Reset MCP servers if issues occur
+claude mcp remove --all
+./setup.sh
+
+# Check MCP server status
+claude mcp list
+
+# Reinstall specific server
+cd ~/.config/claude-code/mcp-servers/
+rm -rf fetch-mcp
+# Run setup.sh again
+```
 
 Happy coding with Laravel 12 + FluxUI + Livewire Volt + Claude Code! 🚀
 
